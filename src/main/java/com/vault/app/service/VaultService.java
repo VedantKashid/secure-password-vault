@@ -47,4 +47,34 @@ public class VaultService {
 
         return vault;
     }
+    public void updatePassword(String username, Long passwordId, PasswordRequestDTO request) {
+        // 1. Authenticate the user
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // 2. Find the specific password AND verify this user owns it
+        SavedPassword existingPassword = passwordRepository.findByIdAndUserId(passwordId, user.getId())
+                .orElseThrow(() -> new RuntimeException("Password entry not found or unauthorized"));
+
+        // 3. Update the details and encrypt the new password
+        existingPassword.setPlatform(request.getPlatform());
+        existingPassword.setLoginUsername(request.getLoginUsername());
+        existingPassword.setEncryptedPassword(encryptionUtil.encrypt(request.getPassword()));
+
+        // 4. Save the changes
+        passwordRepository.save(existingPassword);
+    }
+
+    public void deletePassword(String username, Long passwordId) {
+        // 1. Authenticate the user
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // 2. Find the password and verify ownership
+        SavedPassword existingPassword = passwordRepository.findByIdAndUserId(passwordId, user.getId())
+                .orElseThrow(() -> new RuntimeException("Password entry not found or unauthorized"));
+
+        // 3. Delete it forever
+        passwordRepository.delete(existingPassword);
+    }
 }

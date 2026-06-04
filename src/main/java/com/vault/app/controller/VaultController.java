@@ -35,4 +35,25 @@ public class VaultController {
     public ResponseEntity<List<SavedPassword>> getAllPasswords(Principal principal) {
         return ResponseEntity.ok(vaultService.getUserPasswords(principal.getName()));
     }
+    // Update an existing password
+    @PutMapping("/{passwordId}")
+    public ResponseEntity<String> updatePassword(Principal principal, @PathVariable Long passwordId, @Valid @RequestBody PasswordRequestDTO request) {
+        try {
+            vaultService.updatePassword(principal.getName(), passwordId, request);
+            return ResponseEntity.ok("Password updated successfully!");
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // Delete a password
+    @DeleteMapping("/{passwordId}")
+    public ResponseEntity<String> deletePassword(Principal principal, @PathVariable Long passwordId) {
+        try {
+            vaultService.deletePassword(principal.getName(), passwordId);
+            return ResponseEntity.ok("Password deleted successfully!");
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
 }
