@@ -25,4 +25,23 @@ public class JwtUtil {
                 .signWith(key)
                 .compact();
     }
+    // Extracts the username from the token badge
+    public String extractUsername(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+    }
+
+    // Checks if the badge is real and hasn't expired
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            return true;
+        } catch (Exception e) {
+            return false; // Fake or expired token!
+        }
+    }
 }

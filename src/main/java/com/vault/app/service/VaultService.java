@@ -19,30 +19,30 @@ public class VaultService {
     private final UserRepository userRepository;
     private final EncryptionUtil encryptionUtil;
 
-    public void savePassword(Long userId, PasswordRequestDTO request) {
-        // 1. Find the user making the request
-        User user = userRepository.findById(userId)
+    public void savePassword(String username, PasswordRequestDTO request) {
+        // Find the user by their verified username from the token
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // 2. Create a new SavedPassword entity
         SavedPassword newPassword = new SavedPassword();
         newPassword.setPlatform(request.getPlatform());
         newPassword.setLoginUsername(request.getLoginUsername());
 
-        // 3. Encrypt the actual password using AES
         String encrypted = encryptionUtil.encrypt(request.getPassword());
         newPassword.setEncryptedPassword(encrypted);
 
-        // 4. Link it to the user and save
         newPassword.setUser(user);
         passwordRepository.save(newPassword);
     }
 
-    public List<SavedPassword> getUserPasswords(Long userId) {
-        // Fetch all passwords for this user
-        List<SavedPassword> vault = passwordRepository.findByUserId(userId);
+    public List<SavedPassword> getUserPasswords(String username) {
+        // Find the user first to get their ID
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Decrypt them so the user can read them
+        // Fetch all passwords for this user
+        List<SavedPassword> vault = passwordRepository.findByUserId(user.getId());
+
         vault.forEach(p -> p.setEncryptedPassword(encryptionUtil.decrypt(p.getEncryptedPassword())));
 
         return vault;
