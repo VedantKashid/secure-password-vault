@@ -24,4 +24,13 @@ public class AuthController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@Valid @RequestBody com.vault.app.dto.UserLoginDTO loginDTO) {
+        try {
+            String token = userService.login(loginDTO);
+            return ResponseEntity.ok(token);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
+        }
+    }
 }
