@@ -8,33 +8,35 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
-@Table(name = "users")
+@Table(name = "saved_passwords")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class SavedPassword {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
-    private String username;
+    @Column(nullable = false)
+    private String platform; // e.g., Netflix, GitHub, Bank
 
     @Column(nullable = false)
-    private String passwordHash; // Hashed password
+    private String loginUsername; // The username for that specific platform
 
     @Column(nullable = false)
-    private String email;
+    private String encryptedPassword; // The password we will encrypt before saving
+
+    // This creates the Foreign Key linking this password to a specific User
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<SavedPassword> savedPasswords;
 }
