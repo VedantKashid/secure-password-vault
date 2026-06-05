@@ -19,6 +19,7 @@ public class VaultController {
 
     private final VaultService vaultService;
     private final com.vault.app.util.PasswordGenerator passwordGenerator;
+    private final com.vault.app.util.PasswordStrengthChecker strengthChecker;
 
     // Notice we removed /{userId} from the URL!
     @PostMapping("/add")
@@ -79,5 +80,13 @@ public class VaultController {
 
         String generatedPassword = passwordGenerator.generatePassword(length, useSpecial);
         return ResponseEntity.ok(new com.vault.app.dto.PasswordGeneratorDTO(generatedPassword, length, useSpecial));
+    }
+    // Check password strength
+    @PostMapping("/check-strength")
+    public ResponseEntity<com.vault.app.dto.PasswordStrengthDTO> checkPasswordStrength(
+            @RequestBody com.vault.app.dto.CheckStrengthDTO dto) {
+
+        com.vault.app.dto.PasswordStrengthDTO result = strengthChecker.checkStrength(dto.getPassword());
+        return ResponseEntity.ok(result);
     }
 }
