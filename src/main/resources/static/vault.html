@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Vault Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Extra styles specifically for the dashboard layout */
+        .dashboard { max-width: 800px; margin: 40px auto; padding: 20px; }
+        .password-card { background: #2d2d2d; padding: 15px; margin: 10px 0; border-radius: 5px; text-align: left; }
+        .breached { border: 1px solid #ff5252; }
+        .header-actions { display: flex; justify-content: space-between; align-items: center; }
+        .action-row { display: flex; gap: 10px; margin-bottom: 20px; }
+        .action-row input { flex-grow: 1; margin: 0; }
+        .action-row button { margin: 0; width: auto; padding: 0 20px; }
+    </style>
+</head>
+<body>
+<div class="container dashboard">
+    <div class="header-actions">
+        <h2>My Password Vault</h2>
+        <button onclick="logout()" style="width: auto; padding: 8px 15px; background-color: #ff5252;">Logout</button>
+    </div>
+
+    <div class="action-row">
+        <input type="text" id="searchInput" placeholder="Search platforms (leave empty for all)...">
+        <button onclick="loadPasswords()">Search</button>
+        <button onclick="scanBreaches()" style="background-color: #ff9800;">Scan Breaches</button>
+    </div>
+    <div style="background: #252525; padding: 20px; border-radius: 5px; margin-bottom: 20px; text-align: left;">
+        <h3 style="margin-top: 0; color: #4CAF50;">➕ Add New Password</h3>
+        <input type="text" id="newPlatform" placeholder="Platform (e.g., Netflix)">
+        <input type="text" id="newUsername" placeholder="Username / Email">
+
+        <div style="display: flex; gap: 10px;">
+            <input type="text" id="newPassword" placeholder="Password" style="flex-grow: 1;">
+            <button onclick="generateRandom()" style="width: auto; background-color: #2196F3; margin: 10px 0;">Generate</button>
+        </div>
+
+        <button onclick="saveNewPassword()" style="margin-top: 5px;">Save to Vault</button>
+    </div>
+    <div id="vaultList">
+        <p>Loading your vault...</p>
+    </div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/vault.js"></script>
+</body>
+</html>

@@ -20,6 +20,7 @@ public class VaultController {
     private final VaultService vaultService;
     private final com.vault.app.util.PasswordGenerator passwordGenerator;
     private final com.vault.app.util.PasswordStrengthChecker strengthChecker;
+    private final com.vault.app.service.BreachDetectionService breachService;
 
     // Notice we removed /{userId} from the URL!
     @PostMapping("/add")
@@ -88,5 +89,23 @@ public class VaultController {
 
         com.vault.app.dto.PasswordStrengthDTO result = strengthChecker.checkStrength(dto.getPassword());
         return ResponseEntity.ok(result);
+    }
+    // Trigger a full vault breach scan
+    @GetMapping("/scan-breaches")
+    public ResponseEntity<com.vault.app.dto.BreachScanResultDTO> scanForBreaches(Principal principal) {
+        return ResponseEntity.ok(breachService.scanAllPasswords(principal.getName()));
+    }
+
+    // Retrieve only the passwords currently marked as breached
+    // Retrieve only the passwords currently marked as breached
+    @GetMapping("/breached-passwords")
+    public ResponseEntity<List<SavedPassword>> getBreachedPasswords(Principal principal) {
+        // Fetch all passwords and filter for the breached ones
+        List<SavedPassword> allPasswords = vaultService.getUserPasswords(principal.getName());
+        List<SavedPassword> breachedOnly = allPasswords.stream()
+                .filter(p -> Boolean.TRUE.equals(p.getIsBreached()))
+                .toList();
+
+        return ResponseEntity.ok(breachedOnly);
     }
 }

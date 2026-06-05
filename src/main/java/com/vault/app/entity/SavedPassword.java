@@ -39,4 +39,6 @@ public class SavedPassword {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+    @Column(nullable = false)
+    private Boolean isBreached = false;
 }

@@ -27,8 +27,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
-                        // NOTICE: We completely removed the /api/vault/** permitAll line!
-                        .anyRequest().authenticated()
+                        .requestMatchers("/", "/*.html", "/css/**", "/js/**").permitAll() // VIP pass for static files
+                        .anyRequest().authenticated() // The ONLY catch-all, securely at the very end!
                 )
                 .headers(headers -> headers.frameOptions(frame -> frame.disable()))
                 // Put our JWT Filter in front of the standard Spring security gate
