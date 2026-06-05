@@ -13,4 +13,5 @@ public interface SavedPasswordRepository extends JpaRepository<SavedPassword, Lo
     List<SavedPassword> findByUserId(Long userId);
     // Ensures we only fetch a password if it belongs to the specific user requesting it
     Optional<SavedPassword> findByIdAndUserId(Long id, Long userId);
+    List<SavedPassword> findByUserIdAndPlatformContainingIgnoreCase(Long userId, String platform);
 }

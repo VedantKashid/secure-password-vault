@@ -56,4 +56,14 @@ public class VaultController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+    // Search passwords by platform keyword
+    @GetMapping("/search")
+    public ResponseEntity<List<SavedPassword>> searchPasswords(Principal principal, @RequestParam String keyword) {
+        try {
+            List<SavedPassword> results = vaultService.searchPasswords(principal.getName(), keyword);
+            return ResponseEntity.ok(results);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
 }

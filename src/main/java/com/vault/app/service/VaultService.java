@@ -77,4 +77,18 @@ public class VaultService {
         // 3. Delete it forever
         passwordRepository.delete(existingPassword);
     }
+    public List<SavedPassword> searchPasswords(String username, String keyword) {
+        // 1. Authenticate the user
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // 2. Fetch the filtered passwords (using 'platform' since that's what we named it on Day 4)
+        List<SavedPassword> searchResults = passwordRepository
+                .findByUserIdAndPlatformContainingIgnoreCase(user.getId(), keyword);
+
+        // 3. Decrypt them so they are readable
+        searchResults.forEach(p -> p.setEncryptedPassword(encryptionUtil.decrypt(p.getEncryptedPassword())));
+
+        return searchResults;
+    }
 }
