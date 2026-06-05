@@ -18,6 +18,7 @@ import java.util.List;
 public class VaultController {
 
     private final VaultService vaultService;
+    private final com.vault.app.util.PasswordGenerator passwordGenerator;
 
     // Notice we removed /{userId} from the URL!
     @PostMapping("/add")
@@ -65,5 +66,18 @@ public class VaultController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
+    }
+    // Generate a secure random password
+    @GetMapping("/generate")
+    public ResponseEntity<?> generatePassword(
+            @RequestParam(defaultValue = "16") int length,
+            @RequestParam(defaultValue = "true") boolean useSpecial) {
+
+        if (length < 8 || length > 128) {
+            return new ResponseEntity<>("Length must be between 8 and 128", HttpStatus.BAD_REQUEST);
+        }
+
+        String generatedPassword = passwordGenerator.generatePassword(length, useSpecial);
+        return ResponseEntity.ok(new com.vault.app.dto.PasswordGeneratorDTO(generatedPassword, length, useSpecial));
     }
 }
