@@ -2,7 +2,6 @@
 // VAULT.JS - Password Management Functions
 // ==========================================
 
-// 👇 Added tracking ID for edit mode 👇
 let editingPasswordId = null;
 
 function showToast(message, type = 'success') {
@@ -55,10 +54,10 @@ function displayPasswords(passwords) {
     let html = '';
     passwords.forEach((pwd, index) => {
         const isBreached = pwd.isBreached ? 'breached' : '';
-        const breachLabel = pwd.isBreached ? '<span style="color: #ff5252;">⚠️ BREACHED</span>' : '';
+        const breachLabel = pwd.isBreached ? '<span style="color: #ff5252; font-weight: bold; font-size: 12px;">⚠️ BREACHED</span>' : '';
 
         html += `
-            <div class="password-card ${isBreached}">
+            <div class="password-card ${isBreached}" style="padding: 15px; margin: 10px 0; border-radius: 5px; text-align: left;">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
                         <h4 style="margin: 0 0 5px 0; color: #4CAF50;">${pwd.platform || pwd.website}</h4>
@@ -71,9 +70,9 @@ function displayPasswords(passwords) {
                         ${breachLabel}
                     </div>
                     <div style="display: flex; gap: 10px;">
-                        <button onclick="editPassword(${index})" style="width: auto; background: #ff9800;">✏️ Edit</button>
-                        <button onclick="copyPassword(${index})" style="width: auto; background: #2196F3;">Copy</button>
-                        <button onclick="deletePassword(${index})" style="width: auto; background: #ff5252;">Delete</button>
+                        <button onclick="editPassword(${index})" style="width: auto; padding: 5px 10px; background: #ff9800;">✏️ Edit</button>
+                        <button onclick="copyPassword(${index})" style="width: auto; padding: 5px 10px; background: #2196F3;">📋 Copy</button>
+                        <button onclick="deletePassword(${index})" style="width: auto; padding: 5px 10px; background: #ff5252;">🗑️ Delete</button>
                     </div>
                 </div>
             </div>
@@ -81,12 +80,9 @@ function displayPasswords(passwords) {
     });
 
     vaultList.innerHTML = html;
-
-    // Store passwords globally for delete/copy operations
     window.currentPasswords = passwords;
 }
 
-// Toggle password visibility
 function togglePassword(index) {
     const pwdSpan = document.getElementById(`pwd-${index}`);
     const maskSpan = document.getElementById(`mask-${index}`);
@@ -100,7 +96,6 @@ function togglePassword(index) {
     }
 }
 
-// Copy password to clipboard
 function copyPassword(index) {
     const password = window.currentPasswords[index].encryptedPassword;
     navigator.clipboard.writeText(password).then(() => {
@@ -110,45 +105,33 @@ function copyPassword(index) {
     });
 }
 
-// Delete a password
 async function deletePassword(index) {
     if (!confirm('Are you sure you want to delete this password?')) {
         return;
     }
-
     try {
         const passwordId = window.currentPasswords[index].id;
         await api.deletePassword(passwordId);
         showToast('Password deleted successfully!', 'success');
         loadPasswords();
     } catch (error) {
-        console.error('Error deleting password:', error);
         showToast('Error deleting password: ' + error.message, 'error');
     }
 }
 
-// 👇 ADDED NEW EDIT FUNCTION 👇
 function editPassword(index) {
     const pwd = window.currentPasswords[index];
-
-    // Fill the form with existing data
     document.getElementById('newPlatform').value = pwd.platform || pwd.website;
     document.getElementById('newUsername').value = pwd.loginUsername || pwd.username;
     document.getElementById('newPassword').value = pwd.encryptedPassword;
 
-    // Set global tracking ID
     editingPasswordId = pwd.id;
-
-    // Transform button to Edit mode
     const saveBtn = document.getElementById('saveBtn');
     saveBtn.innerHTML = '🔄 Update Password';
     saveBtn.style.backgroundColor = '#ff9800';
-
-    // Scroll smoothly to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// 👇 UPDATED SAVE FUNCTION TO HANDLE CREATION OR EDITS 👇
 async function saveNewPassword() {
     try {
         const platform = document.getElementById('newPlatform').value.trim();
@@ -166,41 +149,30 @@ async function saveNewPassword() {
         saveBtn.disabled = true;
 
         if (editingPasswordId) {
-            // Update Existing Password
             await api.updatePassword(editingPasswordId, platform, loginUsername, password);
             showToast('Password updated successfully!', 'success');
-
-            // Reset to Create Mode
             editingPasswordId = null;
             saveBtn.innerHTML = '💾 Save to Vault';
             saveBtn.style.backgroundColor = '#4CAF50';
         } else {
-            // Create New Password
             await api.savePassword(platform, loginUsername, password);
             showToast('Password saved successfully!', 'success');
             saveBtn.innerHTML = originalText;
         }
 
         saveBtn.disabled = false;
-
-        // Clear form
         document.getElementById('newPlatform').value = '';
         document.getElementById('newUsername').value = '';
         document.getElementById('newPassword').value = '';
-
-        // Reload passwords
         loadPasswords();
     } catch (error) {
-        console.error('Error saving password:', error);
         showToast('Error: ' + error.message, 'error');
-
         const saveBtn = document.getElementById('saveBtn');
         saveBtn.innerHTML = editingPasswordId ? '🔄 Update Password' : '💾 Save to Vault';
         saveBtn.disabled = false;
     }
 }
 
-// Generate random password
 async function generateRandom() {
     try {
         const result = await api.generatePassword(16, true);
@@ -208,12 +180,10 @@ async function generateRandom() {
         document.getElementById('newPassword').value = generatedPassword;
         showToast('Password generated!', 'success');
     } catch (error) {
-        console.error('Error generating password:', error);
         showToast('Error generating password: ' + error.message, 'error');
     }
 }
 
-// Scan for breaches
 async function scanBreaches() {
     try {
         showToast('Scanning for breaches...', 'success');
@@ -221,12 +191,59 @@ async function scanBreaches() {
         showToast(`Breach scan complete! ${result.breachedCount || 0} breached password(s) found.`, 'success');
         loadPasswords();
     } catch (error) {
-        console.error('Error scanning breaches:', error);
         showToast('Error scanning breaches: ' + error.message, 'error');
     }
 }
 
-// Logout
+// 👇 NEW: Export Vault to CSV locally in the browser 👇
+function exportToCSV() {
+    if (!window.currentPasswords || window.currentPasswords.length === 0) {
+        showToast('Your vault is empty!', 'error');
+        return;
+    }
+
+    // Create the CSV Header
+    let csvContent = "data:text/csv;charset=utf-8,";
+    csvContent += "Platform,Username,Password,Breached\n";
+
+    // Loop through memory and build rows
+    window.currentPasswords.forEach(pwd => {
+        const platform = `"${(pwd.platform || '').replace(/"/g, '""')}"`;
+        const username = `"${(pwd.loginUsername || '').replace(/"/g, '""')}"`;
+        const password = `"${(pwd.encryptedPassword || '').replace(/"/g, '""')}"`;
+        const breached = pwd.isBreached ? "Yes" : "No";
+
+        csvContent += `${platform},${username},${password},${breached}\n`;
+    });
+
+    // Create a hidden link and trigger the download
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "secure_vault_export.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    showToast('Vault exported successfully!', 'success');
+}
+
+// 👇 NEW: Toggle Light/Dark Mode 👇
+function toggleTheme() {
+    const body = document.body;
+    const themeBtn = document.getElementById('themeBtn');
+
+    if (body.classList.contains('light-theme')) {
+        body.classList.remove('light-theme');
+        body.classList.add('dark-theme');
+        themeBtn.innerHTML = '☀️ Switch to Light Mode';
+    } else {
+        body.classList.remove('dark-theme');
+        body.classList.add('light-theme');
+        themeBtn.innerHTML = '🌙 Switch to Dark Mode';
+    }
+}
+
 function logout() {
     if (confirm('Are you sure you want to logout?')) {
         api.logout();
@@ -234,13 +251,8 @@ function logout() {
     }
 }
 
-// Initial load when page opens
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Vault page loaded');
-    console.log('Logged in:', api.isLoggedIn());
-
     if (!api.isLoggedIn()) {
-        alert('You are not logged in. Redirecting to login page...');
         window.location.href = 'login.html';
     } else {
         loadPasswords();

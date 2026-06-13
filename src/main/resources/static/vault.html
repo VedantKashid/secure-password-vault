@@ -5,73 +5,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🔐 My Vault - Secure Password Vault</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Light Theme Overrides */
+        body.light-theme { background-color: #f5f5f5; color: #333; }
+        .light-theme .container { background-color: #ffffff; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .light-theme .password-card { background: #f0f0f0; border: 1px solid #ddd; }
+        .light-theme input { background-color: #ffffff; color: #333; border: 1px solid #ccc; }
+        .light-theme .add-password-form { background: #f9f9f9; border: 1px solid #eee; }
+    </style>
 </head>
-<body>
+<body class="dark-theme">
 <div class="container dashboard">
     <div class="header-actions">
         <div>
             <h2>🔐 My Vault</h2>
-            <p style="margin: 5px 0 0 0; color: #a0a0a0; font-size: 14px;">Welcome back, stay secure!</p>
+            <button onclick="toggleTheme()" id="themeBtn" style="background: none; border: none; padding: 0; color: #aaa; cursor: pointer; text-align: left;">
+                ☀️ Switch to Light Mode
+            </button>
         </div>
-        <button onclick="logout()" class="danger small">
+        <button onclick="logout()" class="danger small" style="width: auto; padding: 8px 15px; background-color: #ff5252;">
             🚪 Logout
         </button>
     </div>
 
-    <div class="action-row">
-        <input
-                type="text"
-                id="searchInput"
-                placeholder="🔍 Search your passwords..."
-        >
-        <button onclick="loadPasswords()" class="secondary small">
-            🔎 Search
-        </button>
-        <button onclick="scanBreaches()" class="warning small">
-            ⚠️ Scan Breaches
-        </button>
+    <div class="action-row" style="display: flex; gap: 10px; margin-bottom: 20px; margin-top: 20px;">
+        <input type="text" id="searchInput" placeholder="🔍 Search platforms..." style="flex-grow: 1; margin: 0;">
+        <button onclick="loadPasswords()" style="margin: 0; width: auto; padding: 0 20px; background-color: #2196F3;">🔎 Search</button>
+        <button onclick="exportToCSV()" style="margin: 0; width: auto; padding: 0 20px; background-color: #4CAF50;">📊 Export CSV</button>
+        <button onclick="scanBreaches()" style="margin: 0; width: auto; padding: 0 20px; background-color: #ff9800;">⚠️ Scan</button>
     </div>
 
-    <div class="add-password-form">
-        <h3>➕ Add / Edit Password</h3>
+    <div class="add-password-form" style="background: #252525; padding: 20px; border-radius: 5px; margin-bottom: 20px; text-align: left;">
+        <h3 style="margin-top: 0; color: #4CAF50;">➕ Add / Edit Password</h3>
 
-        <input
-                type="text"
-                id="newPlatform"
-                placeholder="🌐 Platform (e.g., Netflix, Gmail)"
-        >
+        <input type="text" id="newPlatform" placeholder="🌐 Platform (e.g., Netflix)">
+        <input type="text" id="newUsername" placeholder="👤 Username / Email Address">
 
-        <input
-                type="text"
-                id="newUsername"
-                placeholder="👤 Username / Email Address"
-        >
-
-        <div class="password-input-group">
-            <input
-                    type="text"
-                    id="newPassword"
-                    placeholder="🔑 Password"
-            >
-            <button onclick="generateRandom()" class="small" title="Generate a secure password">
-                ⚡ Generate
-            </button>
+        <div style="display: flex; gap: 10px;">
+            <input type="text" id="newPassword" placeholder="🔑 Password" style="flex-grow: 1;">
+            <button onclick="generateRandom()" style="width: auto; background-color: #2196F3; margin: 10px 0;">⚡ Generate</button>
         </div>
 
-        <button id="saveBtn" onclick="saveNewPassword()" class="success" style="margin-top: 10px;">
-            💾 Save to Vault
-        </button>
+        <button id="saveBtn" onclick="saveNewPassword()" style="margin-top: 5px;">💾 Save to Vault</button>
     </div>
 
-    <div id="vaultList" style="margin-top: 30px;">
-        <div class="empty-state">
-            <div class="empty-state-icon">🔍</div>
-            <p>Loading your vault...</p>
-        </div>
+    <div id="vaultList">
+        <p>Loading your vault...</p>
     </div>
 </div>
 
-<div id="toast"></div>
+<div id="toast" style="display: none;"></div>
 
 <script src="js/api.js"></script>
 <script src="js/vault.js"></script>
