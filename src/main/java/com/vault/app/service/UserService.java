@@ -37,16 +37,34 @@ public class UserService {
         return userRepository.save(newUser);
     }
     public String login(com.vault.app.dto.UserLoginDTO loginDTO) {
+
+        System.out.println("🚨 USERNAME RECEIVED: [" + loginDTO.getUsername() + "]");
+        System.out.println("🚨 PASSWORD RECEIVED: [" + loginDTO.getPassword() + "]");
+
         // 1. Find the user
         User user = userRepository.findByUsername(loginDTO.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found!"));
 
-        // 2. Check if the password matches the hashed password in the DB
-        if (!passwordEncoder.matches(loginDTO.getPassword(), user.getPasswordHash())) {
+        System.out.println("🚨 DB HASH FOUND: " + user.getPasswordHash());
+
+        // 2. See if the password encoder actually matches them
+        boolean isMatch = passwordEncoder.matches(loginDTO.getPassword(), user.getPasswordHash());
+        System.out.println("🚨 DID PASSWORD MATCH? " + isMatch);
+
+        if (!isMatch) {
             throw new RuntimeException("Invalid password!");
         }
 
-        // 3. If everything is correct, generate and return the JWT
-        return jwtUtil.generateToken(user.getUsername());
+        // 3. If it matched, try to generate the token!
+        System.out.println("🚨 PASSWORD CORRECT! ATTEMPTING TO GENERATE JWT...");
+        try {
+            String token = jwtUtil.generateToken(user.getUsername());
+            System.out.println("🚨 JWT GENERATED SUCCESSFULLY!");
+            return token;
+        } catch (Exception e) {
+            System.out.println("🚨 CRASH! JWT GENERATOR FAILED: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("JWT Crash: " + e.getMessage());
+        }
     }
 }

@@ -53,3 +53,32 @@ button:hover { background-color: #45a049; }
     display: none;
     font-size: 14px;
 }
+/* --- TOAST NOTIFICATIONS --- */
+#toast {
+    visibility: hidden;
+    min-width: 250px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 5px;
+    padding: 16px;
+    position: fixed;
+    z-index: 1000;
+    left: 50%;
+    bottom: 30px;
+    transform: translateX(-50%);
+    font-size: 15px;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.5);
+    transition: visibility 0s, opacity 0.5s linear, bottom 0.5s ease-in-out;
+    opacity: 0;
+}
+
+#toast.show {
+    visibility: visible;
+    opacity: 1;
+    bottom: 50px;
+}
+
+#toast.success { border-left: 5px solid #4CAF50; }
+#toast.error { border-left: 5px solid #ff5252; }
+#toast.warning { border-left: 5px solid #ff9800; }

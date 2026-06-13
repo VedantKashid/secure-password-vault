@@ -1,8 +1,11 @@
 package com.vault.app.controller;
 
-import com.vault.app.dto.PasswordRequestDTO;
+import com.vault.app.dto.*;
 import com.vault.app.entity.SavedPassword;
 import com.vault.app.service.VaultService;
+import com.vault.app.service.BreachDetectionService;
+import com.vault.app.util.PasswordGenerator;
+import com.vault.app.util.PasswordStrengthChecker;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,99 +16,143 @@ import java.security.Principal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/vault")
+@RequestMapping("/api/passwords")  // ← Changed from /api/vault
+@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class VaultController {
 
     private final VaultService vaultService;
-    private final com.vault.app.util.PasswordGenerator passwordGenerator;
-    private final com.vault.app.util.PasswordStrengthChecker strengthChecker;
-    private final com.vault.app.service.BreachDetectionService breachService;
+    private final PasswordGenerator passwordGenerator;
+    private final PasswordStrengthChecker strengthChecker;
+    private final BreachDetectionService breachService;
 
-    // Notice we removed /{userId} from the URL!
-    @PostMapping("/add")
-    public ResponseEntity<String> addPassword(Principal principal, @Valid @RequestBody PasswordRequestDTO request) {
+    // POST /api/passwords (was /api/vault/add)
+    @PostMapping
+    public ResponseEntity<?> addPassword(Principal principal, @Valid @RequestBody PasswordRequestDTO request) {
         try {
-            // principal.getName() automatically extracts the username from the verified JWT
             vaultService.savePassword(principal.getName(), request);
-            return new ResponseEntity<>("Password saved securely!", HttpStatus.CREATED);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(
+                    new ApiResponse("Password saved successfully!", null),
+                    HttpStatus.CREATED
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse("Error saving password", e.getMessage()));
         }
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<List<SavedPassword>> getAllPasswords(Principal principal) {
-        return ResponseEntity.ok(vaultService.getUserPasswords(principal.getName()));
+    // GET /api/passwords (was /api/vault/all)
+    @GetMapping
+    public ResponseEntity<?> getAllPasswords(Principal principal) {
+        try {
+            List<SavedPassword> passwords = vaultService.getUserPasswords(principal.getName());
+            return ResponseEntity.ok(new ApiResponse("Success", passwords));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse("Error", e.getMessage()));
+        }
     }
-    // Update an existing password
+
+    // PUT /api/passwords/{passwordId}
     @PutMapping("/{passwordId}")
-    public ResponseEntity<String> updatePassword(Principal principal, @PathVariable Long passwordId, @Valid @RequestBody PasswordRequestDTO request) {
+    public ResponseEntity<?> updatePassword(
+            Principal principal,
+            @PathVariable Long passwordId,
+            @Valid @RequestBody PasswordRequestDTO request) {
         try {
             vaultService.updatePassword(principal.getName(), passwordId, request);
-            return ResponseEntity.ok("Password updated successfully!");
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return ResponseEntity.ok(new ApiResponse("Password updated successfully!", null));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse("Error updating password", e.getMessage()));
         }
     }
 
-    // Delete a password
+    // DELETE /api/passwords/{passwordId}
     @DeleteMapping("/{passwordId}")
-    public ResponseEntity<String> deletePassword(Principal principal, @PathVariable Long passwordId) {
+    public ResponseEntity<?> deletePassword(Principal principal, @PathVariable Long passwordId) {
         try {
             vaultService.deletePassword(principal.getName(), passwordId);
-            return ResponseEntity.ok("Password deleted successfully!");
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return ResponseEntity.ok(new ApiResponse("Password deleted successfully!", null));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse("Error deleting password", e.getMessage()));
         }
     }
-    // Search passwords by platform keyword
+
+    // GET /api/passwords/search?keyword=... (was /api/vault/search)
     @GetMapping("/search")
-    public ResponseEntity<List<SavedPassword>> searchPasswords(Principal principal, @RequestParam String keyword) {
+    public ResponseEntity<?> searchPasswords(Principal principal, @RequestParam String keyword) {
         try {
             List<SavedPassword> results = vaultService.searchPasswords(principal.getName(), keyword);
-            return ResponseEntity.ok(results);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            return ResponseEntity.ok(new ApiResponse("Search results", results));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse("Error searching", e.getMessage()));
         }
     }
-    // Generate a secure random password
+
+    // GET /api/passwords/generate
     @GetMapping("/generate")
     public ResponseEntity<?> generatePassword(
             @RequestParam(defaultValue = "16") int length,
             @RequestParam(defaultValue = "true") boolean useSpecial) {
-
-        if (length < 8 || length > 128) {
-            return new ResponseEntity<>("Length must be between 8 and 128", HttpStatus.BAD_REQUEST);
+        try {
+            if (length < 8 || length > 128) {
+                return ResponseEntity.badRequest()
+                        .body(new ApiResponse("Invalid length", "Must be 8-128"));
+            }
+            String password = passwordGenerator.generatePassword(length, useSpecial);
+            return ResponseEntity.ok(new ApiResponse("Success",
+                    new PasswordGeneratorDTO(password, length, useSpecial)));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse("Error generating password", e.getMessage()));
         }
-
-        String generatedPassword = passwordGenerator.generatePassword(length, useSpecial);
-        return ResponseEntity.ok(new com.vault.app.dto.PasswordGeneratorDTO(generatedPassword, length, useSpecial));
     }
-    // Check password strength
+
+    // POST /api/passwords/check-strength
     @PostMapping("/check-strength")
-    public ResponseEntity<com.vault.app.dto.PasswordStrengthDTO> checkPasswordStrength(
-            @RequestBody com.vault.app.dto.CheckStrengthDTO dto) {
-
-        com.vault.app.dto.PasswordStrengthDTO result = strengthChecker.checkStrength(dto.getPassword());
-        return ResponseEntity.ok(result);
+    public ResponseEntity<?> checkPasswordStrength(@Valid @RequestBody CheckStrengthDTO dto) {
+        try {
+            PasswordStrengthDTO result = strengthChecker.checkStrength(dto.getPassword());
+            return ResponseEntity.ok(new ApiResponse("Success", result));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse("Error", e.getMessage()));
+        }
     }
-    // Trigger a full vault breach scan
+
+    // GET /api/passwords/scan-breaches
     @GetMapping("/scan-breaches")
-    public ResponseEntity<com.vault.app.dto.BreachScanResultDTO> scanForBreaches(Principal principal) {
-        return ResponseEntity.ok(breachService.scanAllPasswords(principal.getName()));
+    public ResponseEntity<?> scanForBreaches(Principal principal) {
+        try {
+            BreachScanResultDTO result = breachService.scanAllPasswords(principal.getName());
+            return ResponseEntity.ok(new ApiResponse("Scan complete", result));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse("Error scanning", e.getMessage()));
+        }
     }
 
-    // Retrieve only the passwords currently marked as breached
-    // Retrieve only the passwords currently marked as breached
+    // GET /api/passwords/breached-passwords
     @GetMapping("/breached-passwords")
-    public ResponseEntity<List<SavedPassword>> getBreachedPasswords(Principal principal) {
-        // Fetch all passwords and filter for the breached ones
-        List<SavedPassword> allPasswords = vaultService.getUserPasswords(principal.getName());
-        List<SavedPassword> breachedOnly = allPasswords.stream()
-                .filter(p -> Boolean.TRUE.equals(p.getIsBreached()))
-                .toList();
-
-        return ResponseEntity.ok(breachedOnly);
+    public ResponseEntity<?> getBreachedPasswords(Principal principal) {
+        try {
+            List<SavedPassword> all = vaultService.getUserPasswords(principal.getName());
+            List<SavedPassword> breached = all.stream()
+                    .filter(p -> Boolean.TRUE.equals(p.getIsBreached()))
+                    .toList();
+            return ResponseEntity.ok(new ApiResponse("Breached passwords", breached));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse("Error", e.getMessage()));
+        }
     }
 }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin(origins = "*") // <--- The final key to unlock the frontend!
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -24,6 +25,7 @@ public class AuthController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
     @PostMapping("/login")
     public ResponseEntity<String> login(@Valid @RequestBody com.vault.app.dto.UserLoginDTO loginDTO) {
         try {
