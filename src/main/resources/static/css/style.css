@@ -1,75 +1,211 @@
-body {
-    background-color: #121212;
-    color: #e0e0e0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+/* ============================================
+   SECURE PASSWORD VAULT - MODERN UI DESIGN
+   ============================================ */
+
+* {
     margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-
-.container {
-    background-color: #1e1e1e;
-    padding: 40px;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-    text-align: center;
-    width: 100%;
-    max-width: 400px;
-}
-
-h2 { margin-top: 0; }
-
-input {
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    background-color: #2d2d2d;
-    border: 1px solid #444;
-    color: white;
-    border-radius: 5px;
+    padding: 0;
     box-sizing: border-box;
 }
 
-button {
-    width: 100%;
-    padding: 12px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    margin-top: 15px;
-    font-weight: bold;
+body {
+    font-family: 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+    background: linear-gradient(135deg, #0f3460 0%, #16213e 50%, #0f3460 100%);
+    color: #e0e0e0;
+    min-height: 100vh;
+    background-attachment: fixed;
+    overflow-x: hidden;
 }
 
-button:hover { background-color: #45a049; }
+/* ============ GENERAL STYLES ============ */
+
+.container {
+    background: rgba(30, 30, 30, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 50px 40px;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    max-width: 450px;
+    margin: 50px auto;
+    animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+h1, h2, h3 {
+    background: linear-gradient(135deg, #00d4ff, #0099ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+h1 { font-size: 32px; }
+h2 { font-size: 28px; }
+h3 { font-size: 18px; }
+
+p {
+    color: #a0a0a0;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+/* ============ INPUT FIELDS ============ */
+
+input {
+    width: 100%;
+    padding: 14px 16px;
+    margin: 12px 0;
+    background: rgba(45, 45, 45, 0.8);
+    border: 2px solid rgba(0, 212, 255, 0.2);
+    color: #e0e0e0;
+    border-radius: 10px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+input:focus {
+    outline: none;
+    background: rgba(45, 45, 45, 1);
+    border-color: #00d4ff;
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+}
+
+input::placeholder {
+    color: #666;
+}
+
+/* ============ BUTTONS ============ */
+
+button {
+    width: 100%;
+    padding: 14px 20px;
+    margin-top: 15px;
+    background: linear-gradient(135deg, #00d4ff, #0099ff);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
+    background: linear-gradient(135deg, #00e5ff, #00bbff);
+}
+
+button:active {
+    transform: translateY(-1px);
+}
+
+button.secondary {
+    background: rgba(100, 100, 100, 0.6);
+    box-shadow: 0 4px 15px rgba(100, 100, 100, 0.2);
+}
+
+button.secondary:hover {
+    background: rgba(120, 120, 120, 0.8);
+    box-shadow: 0 6px 20px rgba(100, 100, 100, 0.3);
+}
+
+button.danger {
+    background: linear-gradient(135deg, #ff5252, #ff1744);
+    box-shadow: 0 4px 15px rgba(255, 82, 82, 0.3);
+}
+
+button.danger:hover {
+    box-shadow: 0 6px 20px rgba(255, 82, 82, 0.5);
+}
+
+button.warning {
+    background: linear-gradient(135deg, #ff9800, #ff6f00);
+    box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+}
+
+button.warning:hover {
+    box-shadow: 0 6px 20px rgba(255, 152, 0, 0.5);
+}
+
+button.success {
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+}
+
+button.success:hover {
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5);
+}
+
+button.small {
+    width: auto;
+    padding: 10px 20px;
+    margin: 0;
+    font-size: 14px;
+}
+
+/* ============ ERROR MESSAGES ============ */
 
 .error-msg {
     color: #ff5252;
-    margin-top: 10px;
+    background: rgba(255, 82, 82, 0.1);
+    border-left: 4px solid #ff5252;
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
     display: none;
     font-size: 14px;
+    animation: shake 0.5s ease;
 }
-/* --- TOAST NOTIFICATIONS --- */
+
+.error-msg.show {
+    display: block;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* ============ TOAST NOTIFICATIONS ============ */
+
 #toast {
     visibility: hidden;
-    min-width: 250px;
-    background-color: #333;
+    min-width: 300px;
+    background: rgba(50, 50, 50, 0.95);
+    backdrop-filter: blur(10px);
     color: #fff;
     text-align: center;
-    border-radius: 5px;
-    padding: 16px;
+    border-radius: 10px;
+    padding: 16px 20px;
     position: fixed;
     z-index: 1000;
     left: 50%;
     bottom: 30px;
     transform: translateX(-50%);
     font-size: 15px;
-    box-shadow: 0px 4px 10px rgba(0,0,0,0.5);
-    transition: visibility 0s, opacity 0.5s linear, bottom 0.5s ease-in-out;
+    font-weight: 500;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+    border-left: 5px solid #666;
+    transition: all 0.4s ease;
     opacity: 0;
 }
 
@@ -77,8 +213,413 @@ button:hover { background-color: #45a049; }
     visibility: visible;
     opacity: 1;
     bottom: 50px;
+    animation: slideInToast 0.4s ease-out;
 }
 
-#toast.success { border-left: 5px solid #4CAF50; }
-#toast.error { border-left: 5px solid #ff5252; }
-#toast.warning { border-left: 5px solid #ff9800; }
+@keyframes slideInToast {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+#toast.success {
+    background: rgba(76, 175, 80, 0.95);
+    border-left-color: #4CAF50;
+}
+
+#toast.error {
+    background: rgba(255, 82, 82, 0.95);
+    border-left-color: #ff5252;
+}
+
+#toast.warning {
+    background: rgba(255, 152, 0, 0.95);
+    border-left-color: #ff9800;
+}
+
+/* ============ DASHBOARD STYLES ============ */
+
+.dashboard {
+    max-width: 900px !important;
+    margin: 30px auto !important;
+    padding: 30px !important;
+}
+
+.header-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid rgba(0, 212, 255, 0.2);
+}
+
+.header-actions h2 {
+    margin: 0;
+    font-size: 32px;
+}
+
+.header-actions button {
+    width: auto;
+    padding: 10px 25px;
+    margin: 0;
+}
+
+.action-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+}
+
+.action-row input {
+    flex-grow: 1;
+    margin: 0;
+    min-width: 200px;
+}
+
+.action-row button {
+    margin: 0;
+    width: auto;
+    padding: 14px 25px;
+}
+
+/* ============ ADD PASSWORD FORM ============ */
+
+.add-password-form {
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.05), rgba(0, 153, 255, 0.05));
+    border: 2px solid rgba(0, 212, 255, 0.2);
+    padding: 25px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    backdrop-filter: blur(5px);
+    animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.add-password-form h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #4CAF50;
+}
+
+.password-input-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.password-input-group input {
+    flex-grow: 1;
+}
+
+.password-input-group button {
+    width: auto;
+    padding: 14px 20px;
+    margin: 0;
+    background: linear-gradient(135deg, #2196F3, #1976D2);
+    box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+}
+
+.password-input-group button:hover {
+    box-shadow: 0 6px 20px rgba(33, 150, 243, 0.5);
+}
+
+/* ============ PASSWORD CARDS ============ */
+
+.password-card {
+    background: linear-gradient(135deg, rgba(45, 45, 45, 0.8), rgba(35, 35, 35, 0.8));
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 12px;
+    text-align: left;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+    animation: cardEnter 0.4s ease-out;
+}
+
+@keyframes cardEnter {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.password-card:hover {
+    border-color: rgba(0, 212, 255, 0.5);
+    box-shadow: 0 6px 20px rgba(0, 212, 255, 0.15);
+    transform: translateY(-3px);
+}
+
+.password-card.breached {
+    border-color: #ff5252;
+    background: linear-gradient(135deg, rgba(255, 82, 82, 0.1), rgba(255, 24, 24, 0.1));
+}
+
+.password-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.password-card-header h4 {
+    margin: 0 0 5px 0;
+    color: #00d4ff;
+    background: none;
+    -webkit-text-fill-color: #00d4ff;
+    font-size: 18px;
+}
+
+.password-card-details p {
+    margin: 8px 0;
+    color: #a0a0a0;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+}
+
+.password-card-details p strong {
+    color: #e0e0e0;
+    margin-right: 8px;
+    min-width: 80px;
+}
+
+.breach-warning {
+    color: #ff5252;
+    background: rgba(255, 82, 82, 0.15);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 12px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.password-card-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.password-card-actions button {
+    flex: 1;
+    padding: 10px 15px;
+    margin: 0;
+    font-size: 14px;
+}
+
+.toggle-password-btn {
+    background: none;
+    border: none;
+    color: #2196F3;
+    cursor: pointer;
+    padding: 0;
+    margin: 0 5px;
+    font-size: 16px;
+    transition: all 0.2s ease;
+}
+
+.toggle-password-btn:hover {
+    transform: scale(1.2);
+    box-shadow: none;
+}
+
+.password-text {
+    font-family: 'Courier New', monospace;
+    color: #4CAF50;
+    letter-spacing: 1px;
+}
+
+/* ============ EMPTY STATE ============ */
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #a0a0a0;
+}
+
+.empty-state-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+    opacity: 0.5;
+}
+
+.empty-state p {
+    color: #a0a0a0;
+    font-size: 16px;
+}
+
+/* ============ LANDING PAGE ============ */
+
+.landing-container {
+    text-align: center;
+    padding: 80px 40px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.landing-container h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+    animation: slideUp 0.8s ease-out;
+}
+
+.landing-container p {
+    font-size: 18px;
+    margin-bottom: 30px;
+    color: #b0b0b0;
+}
+
+.features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+    margin: 50px 0;
+}
+
+.feature-card {
+    background: rgba(30, 30, 30, 0.6);
+    border: 2px solid rgba(0, 212, 255, 0.2);
+    padding: 30px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    animation: slideUp 0.8s ease-out;
+}
+
+.feature-card:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.feature-card:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+.feature-card:hover {
+    border-color: #00d4ff;
+    box-shadow: 0 8px 25px rgba(0, 212, 255, 0.2);
+    transform: translateY(-5px);
+}
+
+.feature-card h3 {
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+.feature-card p {
+    color: #a0a0a0;
+    font-size: 15px;
+}
+
+.cta-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 50px;
+    flex-wrap: wrap;
+}
+
+.cta-buttons button {
+    width: auto;
+    padding: 15px 40px;
+    font-size: 16px;
+}
+
+/* ============ RESPONSIVE DESIGN ============ */
+
+@media (max-width: 600px) {
+    .container {
+        margin: 20px;
+        padding: 30px 20px;
+        max-width: 100%;
+    }
+
+    h1 { font-size: 24px; }
+    h2 { font-size: 20px; }
+
+    .header-actions {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .header-actions button {
+        width: 100%;
+    }
+
+    .action-row {
+        flex-direction: column;
+    }
+
+    .action-row input {
+        width: 100%;
+    }
+
+    .action-row button {
+        width: 100%;
+    }
+
+    .password-card-header {
+        flex-direction: column;
+    }
+
+    .password-card-actions {
+        flex-direction: column;
+    }
+
+    .features {
+        grid-template-columns: 1fr;
+    }
+
+    .landing-container {
+        padding: 40px 20px;
+    }
+
+    .landing-container h1 {
+        font-size: 32px;
+    }
+
+    .cta-buttons {
+        flex-direction: column;
+    }
+
+    .cta-buttons button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 900px) {
+    .dashboard {
+        max-width: 100% !important;
+    }
+}
+
+/* ============ UTILITY CLASSES ============ */
+
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.mt-20 { margin-top: 20px; }
+.mb-20 { margin-bottom: 20px; }
+.hidden { display: none; }
+.visible { display: block; }

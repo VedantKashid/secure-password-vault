@@ -2,6 +2,9 @@
 // VAULT.JS - Password Management Functions
 // ==========================================
 
+// 👇 Added tracking ID for edit mode 👇
+let editingPasswordId = null;
+
 function showToast(message, type = 'success') {
     const toast = document.getElementById('toast');
     toast.textContent = message;
@@ -68,6 +71,7 @@ function displayPasswords(passwords) {
                         ${breachLabel}
                     </div>
                     <div style="display: flex; gap: 10px;">
+                        <button onclick="editPassword(${index})" style="width: auto; background: #ff9800;">✏️ Edit</button>
                         <button onclick="copyPassword(${index})" style="width: auto; background: #2196F3;">Copy</button>
                         <button onclick="deletePassword(${index})" style="width: auto; background: #ff5252;">Delete</button>
                     </div>
@@ -98,7 +102,6 @@ function togglePassword(index) {
 
 // Copy password to clipboard
 function copyPassword(index) {
-    // 👇 FIXED: Now copies the encryptedPassword 👇
     const password = window.currentPasswords[index].encryptedPassword;
     navigator.clipboard.writeText(password).then(() => {
         showToast('Password copied to clipboard!', 'success');
@@ -124,7 +127,28 @@ async function deletePassword(index) {
     }
 }
 
-// Save a new password
+// 👇 ADDED NEW EDIT FUNCTION 👇
+function editPassword(index) {
+    const pwd = window.currentPasswords[index];
+
+    // Fill the form with existing data
+    document.getElementById('newPlatform').value = pwd.platform || pwd.website;
+    document.getElementById('newUsername').value = pwd.loginUsername || pwd.username;
+    document.getElementById('newPassword').value = pwd.encryptedPassword;
+
+    // Set global tracking ID
+    editingPasswordId = pwd.id;
+
+    // Transform button to Edit mode
+    const saveBtn = document.getElementById('saveBtn');
+    saveBtn.innerHTML = '🔄 Update Password';
+    saveBtn.style.backgroundColor = '#ff9800';
+
+    // Scroll smoothly to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// 👇 UPDATED SAVE FUNCTION TO HANDLE CREATION OR EDITS 👇
 async function saveNewPassword() {
     try {
         const platform = document.getElementById('newPlatform').value.trim();
@@ -136,12 +160,28 @@ async function saveNewPassword() {
             return;
         }
 
-        console.log('Saving password:', { platform, loginUsername });
+        const saveBtn = document.getElementById('saveBtn');
+        const originalText = saveBtn.innerHTML;
+        saveBtn.innerHTML = '⏳ Processing...';
+        saveBtn.disabled = true;
 
-        // ⚠️ IMPORTANT: Send correct field names to match PasswordRequestDTO
-        await api.savePassword(platform, loginUsername, password);
+        if (editingPasswordId) {
+            // Update Existing Password
+            await api.updatePassword(editingPasswordId, platform, loginUsername, password);
+            showToast('Password updated successfully!', 'success');
 
-        showToast('Password saved successfully!', 'success');
+            // Reset to Create Mode
+            editingPasswordId = null;
+            saveBtn.innerHTML = '💾 Save to Vault';
+            saveBtn.style.backgroundColor = '#4CAF50';
+        } else {
+            // Create New Password
+            await api.savePassword(platform, loginUsername, password);
+            showToast('Password saved successfully!', 'success');
+            saveBtn.innerHTML = originalText;
+        }
+
+        saveBtn.disabled = false;
 
         // Clear form
         document.getElementById('newPlatform').value = '';
@@ -152,7 +192,11 @@ async function saveNewPassword() {
         loadPasswords();
     } catch (error) {
         console.error('Error saving password:', error);
-        showToast('Error saving password: ' + error.message, 'error');
+        showToast('Error: ' + error.message, 'error');
+
+        const saveBtn = document.getElementById('saveBtn');
+        saveBtn.innerHTML = editingPasswordId ? '🔄 Update Password' : '💾 Save to Vault';
+        saveBtn.disabled = false;
     }
 }
 
@@ -160,10 +204,7 @@ async function saveNewPassword() {
 async function generateRandom() {
     try {
         const result = await api.generatePassword(16, true);
-
-        // result could be the entire DTO or just the password string
         const generatedPassword = result.password || result;
-
         document.getElementById('newPassword').value = generatedPassword;
         showToast('Password generated!', 'success');
     } catch (error) {

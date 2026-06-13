@@ -3,19 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Secure Vault</title>
+    <title>🔐 Login - Secure Password Vault</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 <div class="container">
-    <h2>Login to Vault</h2>
-    <div id="errorMsg" class="error-msg">Invalid credentials. Please try again.</div>
+    <div style="margin-bottom: 30px;">
+        <h1 style="font-size: 36px; margin-bottom: 10px;">🔐</h1>
+        <h2>Welcome Back</h2>
+        <p>Access your secure vault with your credentials</p>
+    </div>
 
-    <input type="text" id="username" placeholder="Username" required>
-    <input type="password" id="password" placeholder="Password" required>
+    <div id="errorMsg" class="error-msg">
+        ⚠️ Invalid credentials. Please try again.
+    </div>
 
-    <button onclick="executeLogin()">Login</button>
+    <input
+            type="text"
+            id="username"
+            placeholder="👤 Username"
+            autocomplete="username"
+            required
+    >
+
+    <input
+            type="password"
+            id="password"
+            placeholder="🔑 Password"
+            autocomplete="current-password"
+            required
+    >
+
+    <button onclick="executeLogin()">🚀 Login to Vault</button>
+
+    <div style="margin-top: 30px; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 20px;">
+        <p style="color: #a0a0a0; margin-bottom: 10px;">New to Secure Vault?</p>
+        <a href="register.html" style="color: #00d4ff; text-decoration: none; font-weight: 600; transition: all 0.3s ease;">
+            Create an account →
+        </a>
+    </div>
 </div>
+
+<div id="toast"></div>
 
 <script src="js/api.js"></script>
 <script src="js/auth.js"></script>
