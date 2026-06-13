@@ -20,6 +20,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Service responsible for external threat intelligence integrations.
+ * Scans user credentials against known data breaches utilizing a
+ * privacy-preserving k-Anonymity model.
+ */
 @Service
 @RequiredArgsConstructor
 public class BreachDetectionService {
@@ -31,7 +36,14 @@ public class BreachDetectionService {
 
     private static final String HIBP_API = "https://api.pwnedpasswords.com/range";
 
-    // 1. Checks a single password against the HIBP database
+    /**
+     * Checks a single plaintext password against the HaveIBeenPwned database.
+     * Employs k-Anonymity by only transmitting the first 5 characters of the SHA-1 hash.
+     * The full password or full hash never leaves the local server.
+     *
+     * @param plainTextPassword The decrypted password to check
+     * @return boolean True if found in a public data breach, false otherwise
+     */
     public boolean isPasswordBreached(String plainTextPassword) {
         try {
             String sha1Hash = generateSHA1(plainTextPassword);
@@ -54,7 +66,14 @@ public class BreachDetectionService {
         }
     }
 
-    // 2. Scans every password in a user's vault
+    /**
+     * Orchestrates a full vault scan for a specific user.
+     * Decrypts each stored password in memory, checks for breaches,
+     * updates the database flags, and aggregates the results.
+     *
+     * @param username The authenticated user's username
+     * @return BreachScanResultDTO containing the total scanned and any breached credentials
+     */
     public BreachScanResultDTO scanAllPasswords(String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -87,7 +106,10 @@ public class BreachDetectionService {
         );
     }
 
-    // SHA-1 Hashing Algorithm
+    /**
+     * Utility method to generate a SHA-1 hash.
+     * Used exclusively for k-Anonymity API integration, NOT for password storage.
+     */
     private String generateSHA1(String input) throws Exception {
         MessageDigest digest = MessageDigest.getInstance("SHA-1");
         byte[] hash = digest.digest(input.getBytes(StandardCharsets.UTF_8));

@@ -15,8 +15,14 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.List;
 
+/**
+ * REST Controller handling all secure vault operations.
+ * Exposes endpoints for CRUD operations on encrypted passwords,
+ * password generation, strength checking, and breach detection.
+ * All endpoints require a valid JWT bearer token.
+ */
 @RestController
-@RequestMapping("/api/passwords")  // ← Changed from /api/vault
+@RequestMapping("/api/passwords")
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class VaultController {
@@ -26,7 +32,13 @@ public class VaultController {
     private final PasswordStrengthChecker strengthChecker;
     private final BreachDetectionService breachService;
 
-    // POST /api/passwords (was /api/vault/add)
+    /**
+     * Encrypts and saves a new credential to the user's vault.
+     *
+     * @param principal The authenticated user's security context
+     * @param request The DTO containing plaintext credentials to be encrypted
+     * @return ApiResponse containing the success status
+     */
     @PostMapping
     public ResponseEntity<?> addPassword(Principal principal, @Valid @RequestBody PasswordRequestDTO request) {
         try {
@@ -42,7 +54,12 @@ public class VaultController {
         }
     }
 
-    // GET /api/passwords (was /api/vault/all)
+    /**
+     * Retrieves and decrypts all credentials owned by the authenticated user.
+     *
+     * @param principal The authenticated user's security context
+     * @return ApiResponse containing a list of decrypted SavedPassword objects
+     */
     @GetMapping
     public ResponseEntity<?> getAllPasswords(Principal principal) {
         try {
@@ -55,7 +72,14 @@ public class VaultController {
         }
     }
 
-    // PUT /api/passwords/{passwordId}
+    /**
+     * Updates an existing credential. Validates ownership before processing to prevent IDOR.
+     *
+     * @param principal The authenticated user's security context
+     * @param passwordId The database ID of the credential to update
+     * @param request The DTO containing the updated plaintext credentials
+     * @return ApiResponse indicating success or failure
+     */
     @PutMapping("/{passwordId}")
     public ResponseEntity<?> updatePassword(
             Principal principal,
@@ -71,7 +95,14 @@ public class VaultController {
         }
     }
 
-    // DELETE /api/passwords/{passwordId}
+    /**
+     * Permanently deletes a credential from the vault.
+     * Validates ownership to prevent unauthorized deletion.
+     *
+     * @param principal The authenticated user's security context
+     * @param passwordId The database ID of the credential to delete
+     * @return ApiResponse indicating success or failure
+     */
     @DeleteMapping("/{passwordId}")
     public ResponseEntity<?> deletePassword(Principal principal, @PathVariable Long passwordId) {
         try {
@@ -84,7 +115,6 @@ public class VaultController {
         }
     }
 
-    // GET /api/passwords/search?keyword=... (was /api/vault/search)
     @GetMapping("/search")
     public ResponseEntity<?> searchPasswords(Principal principal, @RequestParam String keyword) {
         try {
@@ -97,7 +127,9 @@ public class VaultController {
         }
     }
 
-    // GET /api/passwords/generate
+    /**
+     * Generates a cryptographically secure random password based on specified parameters.
+     */
     @GetMapping("/generate")
     public ResponseEntity<?> generatePassword(
             @RequestParam(defaultValue = "16") int length,
@@ -116,7 +148,6 @@ public class VaultController {
         }
     }
 
-    // POST /api/passwords/check-strength
     @PostMapping("/check-strength")
     public ResponseEntity<?> checkPasswordStrength(@Valid @RequestBody CheckStrengthDTO dto) {
         try {
@@ -128,7 +159,10 @@ public class VaultController {
         }
     }
 
-    // GET /api/passwords/scan-breaches
+    /**
+     * Triggers a live threat intelligence scan against the HaveIBeenPwned API
+     * for all credentials in the user's vault.
+     */
     @GetMapping("/scan-breaches")
     public ResponseEntity<?> scanForBreaches(Principal principal) {
         try {
@@ -141,7 +175,6 @@ public class VaultController {
         }
     }
 
-    // GET /api/passwords/breached-passwords
     @GetMapping("/breached-passwords")
     public ResponseEntity<?> getBreachedPasswords(Principal principal) {
         try {
