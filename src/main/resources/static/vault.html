@@ -6,56 +6,160 @@
     <title>🔐 My Vault - Secure Password Vault</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        /* Light Theme Overrides */
-        body.light-theme { background-color: #f5f5f5; color: #333; }
-        .light-theme .container { background-color: #ffffff; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .light-theme .password-card { background: #f0f0f0; border: 1px solid #ddd; }
-        .light-theme input { background-color: #ffffff; color: #333; border: 1px solid #ccc; }
-        .light-theme .add-password-form { background: #f9f9f9; border: 1px solid #eee; }
+        /*
+         * FIX: The old inline styles OVERRODE the rich CSS from style.css,
+         * making password cards look flat (#2d2d2d boxes with no gradient,
+         * no hover effect, no breach animation).
+         * Only keeping light-mode overrides here which are vault-specific.
+         */
+
+        /* ── Light Mode ── */
+        body.light-mode {
+            background: linear-gradient(135deg, #dce8f5 0%, #c8dff0 50%, #dce8f5 100%);
+            color: #2c3e50;
+        }
+        body.light-mode .container {
+            background: rgba(255, 255, 255, 0.96);
+            border-color: rgba(0, 153, 204, 0.2);
+        }
+        body.light-mode .password-card {
+            background: linear-gradient(135deg, rgba(240,248,255,0.9), rgba(225,240,255,0.9));
+            border-color: rgba(0, 153, 204, 0.25);
+        }
+        body.light-mode .password-card:hover {
+            border-color: rgba(0, 153, 204, 0.55);
+        }
+        body.light-mode .password-card-header h4 {
+            color: #0077aa;
+            -webkit-text-fill-color: #0077aa;
+        }
+        body.light-mode .password-card-details p {
+            color: #555;
+        }
+        body.light-mode .password-card-details p strong {
+            color: #333;
+        }
+        body.light-mode input {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            border-color: rgba(0, 153, 204, 0.3);
+        }
+        body.light-mode input::placeholder { color: #999; }
+        body.light-mode .add-password-form {
+            background: linear-gradient(135deg, rgba(0,153,204,0.06), rgba(0,100,180,0.06));
+            border-color: rgba(0, 153, 204, 0.25);
+        }
+        body.light-mode .count-badge {
+            background: rgba(0, 153, 204, 0.15);
+            border-color: rgba(0, 153, 204, 0.3);
+            color: #0077aa;
+        }
+        body.light-mode .strength-bar-bg {
+            background: rgba(0, 0, 0, 0.1);
+        }
+        body.light-mode .empty-state p { color: #777; }
+
+        /* ── Theme toggle button ── */
+        .theme-toggle-btn {
+            background: none !important;
+            border: none !important;
+            color: #2196F3 !important;
+            padding: 0 !important;
+            font-size: 13px !important;
+            box-shadow: none !important;
+            width: auto !important;
+            margin: 0 !important;
+            text-transform: none !important;
+            letter-spacing: 0 !important;
+            font-weight: 500 !important;
+            cursor: pointer;
+        }
+        .theme-toggle-btn:hover {
+            transform: none !important;
+            box-shadow: none !important;
+            color: #00d4ff !important;
+            background: none !important;
+        }
     </style>
 </head>
-<body class="dark-theme">
+<body class="dark-mode">
 <div class="container dashboard">
+
+    <!-- ── Header ── -->
     <div class="header-actions">
         <div>
-            <h2>🔐 My Vault</h2>
-            <button onclick="toggleTheme()" id="themeBtn" style="background: none; border: none; padding: 0; color: #aaa; cursor: pointer; text-align: left;">
-                ☀️ Switch to Light Mode
-            </button>
+            <h2 style="margin-bottom: 8px;">🔐 My Password Vault</h2>
+            <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+                <!-- FIX: Added passwordCount badge — vault.js updates this on every load -->
+                <span id="passwordCount" class="count-badge">Loading...</span>
+                <button id="themeBtn" onclick="toggleTheme()" class="theme-toggle-btn">☀️ Light Mode</button>
+            </div>
         </div>
-        <button onclick="logout()" class="danger small" style="width: auto; padding: 8px 15px; background-color: #ff5252;">
+        <button onclick="logout()" class="danger" style="width:auto; padding:10px 20px; margin:0;">
             🚪 Logout
         </button>
     </div>
 
-    <div class="action-row" style="display: flex; gap: 10px; margin-bottom: 20px; margin-top: 20px;">
-        <input type="text" id="searchInput" placeholder="🔍 Search platforms..." style="flex-grow: 1; margin: 0;">
-        <button onclick="loadPasswords()" style="margin: 0; width: auto; padding: 0 20px; background-color: #2196F3;">🔎 Search</button>
-        <button onclick="exportToCSV()" style="margin: 0; width: auto; padding: 0 20px; background-color: #4CAF50;">📊 Export CSV</button>
-        <button onclick="scanBreaches()" style="margin: 0; width: auto; padding: 0 20px; background-color: #ff9800;">⚠️ Scan</button>
+    <!-- ── Search & Action Bar ── -->
+    <div class="action-row">
+        <input type="text" id="searchInput" placeholder="🔍 Search platforms...">
+        <button onclick="loadPasswords()">Search</button>
+        <button onclick="exportToCSV()" class="success">📤 Export</button>
+        <!-- FIX: Added id="scanBtn" so vault.js can disable it during the scan -->
+        <button id="scanBtn" onclick="scanBreaches()" class="warning">🛡️ Scan Breaches</button>
     </div>
 
-    <div class="add-password-form" style="background: #252525; padding: 20px; border-radius: 5px; margin-bottom: 20px; text-align: left;">
-        <h3 style="margin-top: 0; color: #4CAF50;">➕ Add / Edit Password</h3>
+    <!-- ── Add / Edit Form ── -->
+    <!--
+        FIX: Replaced the old div (class="add-form-bg" with raw inline styles) with
+        class="add-password-form" which uses the polished CSS already in style.css.
+    -->
+    <div class="add-password-form">
+        <!-- FIX: Added id="formTitle" so vault.js can change it to "✏️ Edit Password" -->
+        <h3 id="formTitle">➕ Add Password</h3>
 
-        <input type="text" id="newPlatform" placeholder="🌐 Platform (e.g., Netflix)">
-        <input type="text" id="newUsername" placeholder="👤 Username / Email Address">
+        <input type="text" id="newPlatform" placeholder="🌐 Platform  (e.g. Netflix, Gmail)">
+        <input type="text" id="newUsername" placeholder="👤 Username / Email">
 
-        <div style="display: flex; gap: 10px;">
-            <input type="text" id="newPassword" placeholder="🔑 Password" style="flex-grow: 1;">
-            <button onclick="generateRandom()" style="width: auto; background-color: #2196F3; margin: 10px 0;">⚡ Generate</button>
+        <div class="password-input-group">
+            <input type="text" id="newPassword" placeholder="🔑 Enter or generate a password">
+            <button onclick="generateRandom()">🎲 Generate</button>
         </div>
 
-        <button id="saveBtn" onclick="saveNewPassword()" style="margin-top: 5px;">💾 Save to Vault</button>
+        <!-- ── Password Strength Meter ── -->
+        <div class="strength-wrapper">
+            <div class="strength-bar-bg">
+                <div id="strengthBar" class="strength-bar"></div>
+            </div>
+            <span id="strengthText" class="strength-text"></span>
+        </div>
+
+        <div style="display:flex; gap:10px; margin-top:5px;">
+            <button id="saveBtn" onclick="saveNewPassword()" style="flex:1; margin:0;">
+                💾 Save to Vault
+            </button>
+            <!--
+                FIX: Added Cancel button — once in edit mode users were completely
+                stuck with no way to go back to add mode.
+            -->
+            <button id="cancelEditBtn" onclick="cancelEdit()"
+                    class="secondary" style="display:none; width:auto; padding:14px 25px; margin:0;">
+                ✖ Cancel
+            </button>
+        </div>
     </div>
 
+    <!-- ── Vault List ── -->
     <div id="vaultList">
-        <p>Loading your vault...</p>
+        <div class="empty-state">
+            <div class="empty-state-icon" style="font-size:40px; opacity:.6;">⏳</div>
+            <p>Loading your vault...</p>
+        </div>
     </div>
-</div>
 
-<div id="toast" style="display: none;"></div>
+</div><!-- /.container.dashboard -->
 
+<div id="toast"></div>
 <script src="js/api.js"></script>
 <script src="js/vault.js"></script>
 </body>

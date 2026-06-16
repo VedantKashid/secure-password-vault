@@ -9,14 +9,13 @@
 <body>
 <div class="container">
     <div style="margin-bottom: 30px;">
-        <h1 style="font-size: 36px; margin-bottom: 10px;">🔐</h1>
+        <h1 style="font-size: 48px; margin-bottom: 10px; -webkit-text-fill-color: initial;">🔐</h1>
         <h2>Welcome Back</h2>
         <p>Access your secure vault with your credentials</p>
     </div>
 
-    <div id="errorMsg" class="error-msg">
-        ⚠️ Invalid credentials. Please try again.
-    </div>
+    <!-- FIX: Removed hardcoded error text that could flash before CSS loads -->
+    <div id="errorMsg" class="error-msg"></div>
 
     <input
             type="text"
@@ -34,9 +33,10 @@
             required
     >
 
-    <button onclick="executeLogin()">🚀 Login to Vault</button>
+    <!-- FIX: Added id="loginBtn" so auth.js can disable it during login -->
+    <button id="loginBtn" onclick="executeLogin()">🚀 Login to Vault</button>
 
-    <div style="margin-top: 30px; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 20px;">
+    <div style="margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
         <p style="color: #a0a0a0; margin-bottom: 10px;">New to Secure Vault?</p>
         <a href="register.html" style="color: #00d4ff; text-decoration: none; font-weight: 600; transition: all 0.3s ease;">
             Create an account →

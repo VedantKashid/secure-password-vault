@@ -17,7 +17,7 @@ body {
     overflow-x: hidden;
 }
 
-/* ============ GENERAL STYLES ============ */
+/* ============ CONTAINER ============ */
 
 .container {
     background: rgba(30, 30, 30, 0.95);
@@ -33,15 +33,11 @@ body {
 }
 
 @keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
+
+/* ============ TYPOGRAPHY ============ */
 
 h1, h2, h3 {
     background: linear-gradient(135deg, #00d4ff, #0099ff);
@@ -51,7 +47,6 @@ h1, h2, h3 {
     margin-bottom: 15px;
     font-weight: 600;
 }
-
 h1 { font-size: 32px; }
 h2 { font-size: 28px; }
 h3 { font-size: 18px; }
@@ -62,7 +57,7 @@ p {
     margin-bottom: 20px;
 }
 
-/* ============ INPUT FIELDS ============ */
+/* ============ INPUTS ============ */
 
 input {
     width: 100%;
@@ -76,17 +71,13 @@ input {
     transition: all 0.3s ease;
     box-sizing: border-box;
 }
-
 input:focus {
     outline: none;
     background: rgba(45, 45, 45, 1);
     border-color: #00d4ff;
     box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
 }
-
-input::placeholder {
-    color: #666;
-}
+input::placeholder { color: #666; }
 
 /* ============ BUTTONS ============ */
 
@@ -106,59 +97,46 @@ button {
     text-transform: uppercase;
     letter-spacing: 1px;
 }
-
 button:hover {
     transform: translateY(-3px);
     box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
     background: linear-gradient(135deg, #00e5ff, #00bbff);
 }
-
-button:active {
-    transform: translateY(-1px);
-}
+button:active  { transform: translateY(-1px); }
+button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
 button.secondary {
     background: rgba(100, 100, 100, 0.6);
     box-shadow: 0 4px 15px rgba(100, 100, 100, 0.2);
 }
-
 button.secondary:hover {
     background: rgba(120, 120, 120, 0.8);
     box-shadow: 0 6px 20px rgba(100, 100, 100, 0.3);
 }
-
 button.danger {
     background: linear-gradient(135deg, #ff5252, #ff1744);
     box-shadow: 0 4px 15px rgba(255, 82, 82, 0.3);
 }
-
-button.danger:hover {
-    box-shadow: 0 6px 20px rgba(255, 82, 82, 0.5);
-}
+button.danger:hover  { box-shadow: 0 6px 20px rgba(255, 82, 82, 0.5); }
 
 button.warning {
     background: linear-gradient(135deg, #ff9800, #ff6f00);
     box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
 }
-
-button.warning:hover {
-    box-shadow: 0 6px 20px rgba(255, 152, 0, 0.5);
-}
+button.warning:hover { box-shadow: 0 6px 20px rgba(255, 152, 0, 0.5); }
 
 button.success {
     background: linear-gradient(135deg, #4CAF50, #45a049);
     box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
 }
-
-button.success:hover {
-    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5);
-}
+button.success:hover { box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5); }
 
 button.small {
     width: auto;
-    padding: 10px 20px;
+    padding: 10px 18px;
     margin: 0;
-    font-size: 14px;
+    font-size: 13px;
+    letter-spacing: 0.5px;
 }
 
 /* ============ ERROR MESSAGES ============ */
@@ -170,19 +148,17 @@ button.small {
     padding: 12px 15px;
     border-radius: 8px;
     margin-bottom: 20px;
-    display: none;
+    display: none;           /* hidden by default — never shows stale text */
     font-size: 14px;
+    text-align: left;
     animation: shake 0.5s ease;
 }
-
-.error-msg.show {
-    display: block;
-}
+.error-msg.show { display: block; }
 
 @keyframes shake {
     0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
+    25%       { transform: translateX(-5px); }
+    75%       { transform: translateX(5px); }
 }
 
 /* ============ TOAST NOTIFICATIONS ============ */
@@ -205,49 +181,31 @@ button.small {
     font-weight: 500;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
     border-left: 5px solid #666;
-    transition: all 0.4s ease;
     opacity: 0;
+    transition: opacity 0.3s ease, bottom 0.3s ease;
 }
-
 #toast.show {
     visibility: visible;
     opacity: 1;
     bottom: 50px;
     animation: slideInToast 0.4s ease-out;
 }
+#toast.success { background: rgba(76, 175, 80, 0.95);  border-left-color: #4CAF50; }
+#toast.error   { background: rgba(255, 82, 82, 0.95);  border-left-color: #ff5252; }
+#toast.warning { background: rgba(255, 152, 0, 0.95);  border-left-color: #ff9800; }
 
 @keyframes slideInToast {
-    from {
-        opacity: 0;
-        transform: translateX(-50%) translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(-50%) translateY(0);
-    }
+    from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
-#toast.success {
-    background: rgba(76, 175, 80, 0.95);
-    border-left-color: #4CAF50;
-}
-
-#toast.error {
-    background: rgba(255, 82, 82, 0.95);
-    border-left-color: #ff5252;
-}
-
-#toast.warning {
-    background: rgba(255, 152, 0, 0.95);
-    border-left-color: #ff9800;
-}
-
-/* ============ DASHBOARD STYLES ============ */
+/* ============ DASHBOARD ============ */
 
 .dashboard {
     max-width: 900px !important;
     margin: 30px auto !important;
-    padding: 30px !important;
+    padding: 35px !important;
+    text-align: left;
 }
 
 .header-actions {
@@ -258,17 +216,7 @@ button.small {
     padding-bottom: 20px;
     border-bottom: 2px solid rgba(0, 212, 255, 0.2);
 }
-
-.header-actions h2 {
-    margin: 0;
-    font-size: 32px;
-}
-
-.header-actions button {
-    width: auto;
-    padding: 10px 25px;
-    margin: 0;
-}
+.header-actions h2 { margin: 0; font-size: 28px; }
 
 .action-row {
     display: flex;
@@ -276,17 +224,29 @@ button.small {
     margin-bottom: 25px;
     flex-wrap: wrap;
 }
-
 .action-row input {
     flex-grow: 1;
     margin: 0;
     min-width: 200px;
 }
-
 .action-row button {
     margin: 0;
     width: auto;
-    padding: 14px 25px;
+    padding: 14px 20px;
+}
+
+/* ============ PASSWORD COUNT BADGE ============ */
+
+.count-badge {
+    display: inline-block;
+    background: rgba(0, 212, 255, 0.12);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    color: #00d4ff;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
 }
 
 /* ============ ADD PASSWORD FORM ============ */
@@ -298,40 +258,69 @@ button.small {
     border-radius: 15px;
     margin-bottom: 30px;
     backdrop-filter: blur(5px);
-    animation: fadeIn 0.6s ease-out;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    animation: fadeIn 0.5s ease-out;
 }
 
 .add-password-form h3 {
     margin-top: 0;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
     color: #4CAF50;
+    -webkit-text-fill-color: #4CAF50;
+    background: none;
+    font-size: 17px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
 }
 
 .password-input-group {
     display: flex;
     gap: 10px;
-    margin-bottom: 15px;
+    align-items: center;
 }
-
 .password-input-group input {
     flex-grow: 1;
+    margin: 12px 0;
 }
-
 .password-input-group button {
     width: auto;
     padding: 14px 20px;
     margin: 0;
-    background: linear-gradient(135deg, #2196F3, #1976D2);
+    background: linear-gradient(135deg, #2196F3, #1565C0);
     box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+    flex-shrink: 0;
 }
-
 .password-input-group button:hover {
     box-shadow: 0 6px 20px rgba(33, 150, 243, 0.5);
+}
+
+/* ============ PASSWORD STRENGTH METER ============ */
+
+.strength-wrapper {
+    margin: 2px 0 14px;
+}
+.strength-bar-bg {
+    height: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 6px;
+}
+.strength-bar {
+    height: 100%;
+    width: 0%;
+    border-radius: 3px;
+    transition: width 0.35s ease, background 0.35s ease;
+}
+.strength-text {
+    font-size: 12px;
+    font-weight: 600;
+    min-height: 18px;
+    display: block;
+    transition: color 0.35s ease;
+    letter-spacing: 0.3px;
 }
 
 /* ============ PASSWORD CARDS ============ */
@@ -347,42 +336,39 @@ button.small {
     backdrop-filter: blur(5px);
     animation: cardEnter 0.4s ease-out;
 }
-
-@keyframes cardEnter {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
 .password-card:hover {
     border-color: rgba(0, 212, 255, 0.5);
     box-shadow: 0 6px 20px rgba(0, 212, 255, 0.15);
     transform: translateY(-3px);
 }
-
 .password-card.breached {
     border-color: #ff5252;
-    background: linear-gradient(135deg, rgba(255, 82, 82, 0.1), rgba(255, 24, 24, 0.1));
+    background: linear-gradient(135deg, rgba(255, 82, 82, 0.1), rgba(255, 24, 24, 0.08));
+}
+.password-card.breached:hover {
+    border-color: #ff1744;
+    box-shadow: 0 6px 20px rgba(255, 82, 82, 0.25);
+}
+
+@keyframes cardEnter {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
 .password-card-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
+    gap: 10px;
 }
-
 .password-card-header h4 {
-    margin: 0 0 5px 0;
+    margin: 0 0 4px 0;
     color: #00d4ff;
     background: none;
     -webkit-text-fill-color: #00d4ff;
-    font-size: 18px;
+    font-size: 17px;
+    font-weight: 600;
 }
 
 .password-card-details p {
@@ -391,64 +377,69 @@ button.small {
     font-size: 14px;
     display: flex;
     align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
 }
-
 .password-card-details p strong {
     color: #e0e0e0;
     margin-right: 8px;
-    min-width: 80px;
+    min-width: 78px;
 }
 
 .breach-warning {
     color: #ff5252;
     background: rgba(255, 82, 82, 0.15);
-    padding: 8px 12px;
+    padding: 6px 10px;
     border-radius: 6px;
     font-weight: 600;
     display: inline-block;
-    margin-top: 10px;
+    margin-top: 6px;
     font-size: 12px;
+    letter-spacing: 0.3px;
     animation: pulse 2s infinite;
 }
-
 @keyframes pulse {
     0%, 100% { opacity: 1; }
-    50% { opacity: 0.7; }
+    50%       { opacity: 0.65; }
 }
 
 .password-card-actions {
     display: flex;
-    gap: 10px;
-    margin-top: 15px;
+    gap: 8px;
+    margin-top: 14px;
+    flex-wrap: wrap;
 }
-
 .password-card-actions button {
     flex: 1;
-    padding: 10px 15px;
+    min-width: 80px;
+    padding: 9px 12px;
     margin: 0;
-    font-size: 14px;
+    font-size: 13px;
 }
 
 .toggle-password-btn {
-    background: none;
-    border: none;
-    color: #2196F3;
+    background: none !important;
+    border: none !important;
+    color: #2196F3 !important;
     cursor: pointer;
-    padding: 0;
-    margin: 0 5px;
-    font-size: 16px;
-    transition: all 0.2s ease;
+    padding: 0 4px !important;
+    margin: 0 3px !important;
+    font-size: 15px !important;
+    box-shadow: none !important;
+    width: auto !important;
+    transition: transform 0.2s ease !important;
 }
-
 .toggle-password-btn:hover {
-    transform: scale(1.2);
-    box-shadow: none;
+    transform: scale(1.25) !important;
+    box-shadow: none !important;
+    background: none !important;
 }
 
 .password-text {
     font-family: 'Courier New', monospace;
     color: #4CAF50;
     letter-spacing: 1px;
+    word-break: break-all;
 }
 
 /* ============ EMPTY STATE ============ */
@@ -458,17 +449,13 @@ button.small {
     padding: 60px 20px;
     color: #a0a0a0;
 }
-
 .empty-state-icon {
     font-size: 64px;
     margin-bottom: 20px;
     opacity: 0.5;
+    display: block;
 }
-
-.empty-state p {
-    color: #a0a0a0;
-    font-size: 16px;
-}
+.empty-state p { color: #a0a0a0; font-size: 16px; }
 
 /* ============ LANDING PAGE ============ */
 
@@ -478,14 +465,12 @@ button.small {
     max-width: 800px;
     margin: 0 auto;
 }
-
 .landing-container h1 {
     font-size: 48px;
     margin-bottom: 20px;
     animation: slideUp 0.8s ease-out;
 }
-
-.landing-container p {
+.landing-container > p {
     font-size: 18px;
     margin-bottom: 30px;
     color: #b0b0b0;
@@ -493,11 +478,10 @@ button.small {
 
 .features {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 25px;
     margin: 50px 0;
 }
-
 .feature-card {
     background: rgba(30, 30, 30, 0.6);
     border: 2px solid rgba(0, 212, 255, 0.2);
@@ -507,30 +491,15 @@ button.small {
     transition: all 0.3s ease;
     animation: slideUp 0.8s ease-out;
 }
-
-.feature-card:nth-child(2) {
-    animation-delay: 0.1s;
-}
-
-.feature-card:nth-child(3) {
-    animation-delay: 0.2s;
-}
-
+.feature-card:nth-child(2) { animation-delay: 0.1s; }
+.feature-card:nth-child(3) { animation-delay: 0.2s; }
 .feature-card:hover {
     border-color: #00d4ff;
     box-shadow: 0 8px 25px rgba(0, 212, 255, 0.2);
     transform: translateY(-5px);
 }
-
-.feature-card h3 {
-    font-size: 24px;
-    margin-bottom: 15px;
-}
-
-.feature-card p {
-    color: #a0a0a0;
-    font-size: 15px;
-}
+.feature-card h3 { font-size: 22px; margin-bottom: 12px; }
+.feature-card p  { color: #a0a0a0; font-size: 14px; margin: 0; }
 
 .cta-buttons {
     display: flex;
@@ -539,14 +508,13 @@ button.small {
     margin-top: 50px;
     flex-wrap: wrap;
 }
-
 .cta-buttons button {
     width: auto;
     padding: 15px 40px;
     font-size: 16px;
 }
 
-/* ============ RESPONSIVE DESIGN ============ */
+/* ============ RESPONSIVE ============ */
 
 @media (max-width: 600px) {
     .container {
@@ -554,72 +522,42 @@ button.small {
         padding: 30px 20px;
         max-width: 100%;
     }
-
     h1 { font-size: 24px; }
     h2 { font-size: 20px; }
 
     .header-actions {
         flex-direction: column;
         align-items: flex-start;
-        gap: 15px;
+        gap: 12px;
     }
+    .header-actions button { width: 100%; }
 
-    .header-actions button {
-        width: 100%;
-    }
+    .action-row       { flex-direction: column; }
+    .action-row input { width: 100%; }
+    .action-row button { width: 100%; }
 
-    .action-row {
-        flex-direction: column;
-    }
+    .password-card-header  { flex-direction: column; }
+    .password-card-actions { flex-direction: column; }
+    .password-card-actions button { width: 100%; }
 
-    .action-row input {
-        width: 100%;
-    }
+    .features { grid-template-columns: 1fr; }
 
-    .action-row button {
-        width: 100%;
-    }
+    .landing-container { padding: 40px 20px; }
+    .landing-container h1 { font-size: 32px; }
 
-    .password-card-header {
-        flex-direction: column;
-    }
-
-    .password-card-actions {
-        flex-direction: column;
-    }
-
-    .features {
-        grid-template-columns: 1fr;
-    }
-
-    .landing-container {
-        padding: 40px 20px;
-    }
-
-    .landing-container h1 {
-        font-size: 32px;
-    }
-
-    .cta-buttons {
-        flex-direction: column;
-    }
-
-    .cta-buttons button {
-        width: 100%;
-    }
+    .cta-buttons { flex-direction: column; }
+    .cta-buttons button { width: 100%; }
 }
 
 @media (max-width: 900px) {
-    .dashboard {
-        max-width: 100% !important;
-    }
+    .dashboard { max-width: 100% !important; }
 }
 
-/* ============ UTILITY CLASSES ============ */
+/* ============ UTILITIES ============ */
 
 .text-center { text-align: center; }
-.text-left { text-align: left; }
-.mt-20 { margin-top: 20px; }
-.mb-20 { margin-bottom: 20px; }
-.hidden { display: none; }
-.visible { display: block; }
+.text-left   { text-align: left; }
+.mt-20       { margin-top: 20px; }
+.mb-20       { margin-bottom: 20px; }
+.hidden      { display: none; }
+.visible     { display: block; }

@@ -11,45 +11,46 @@
     <h1>🔐 Secure Password Vault</h1>
     <p>Military-grade AES-256 encryption for your digital peace of mind</p>
 
-    <div class="features">
+    <!-- FIX: Added id="features" so the "Learn More" button can scroll to it -->
+    <div id="features" class="features">
         <div class="feature-card">
             <h3>🔒 Bank-Level Encryption</h3>
             <p>Your passwords are encrypted with AES-256, the same standard used by governments and banks worldwide.</p>
         </div>
-
         <div class="feature-card">
             <h3>⚠️ Real-Time Breach Detection</h3>
             <p>Automatically scanned against known data breaches. Get instant alerts if your passwords appear in compromised databases.</p>
         </div>
-
         <div class="feature-card">
             <h3>🔑 Smart Password Generator</h3>
             <p>Generate cryptographically secure passwords with customizable length and complexity in a single click.</p>
         </div>
-
         <div class="feature-card">
             <h3>🛡️ Zero-Knowledge Architecture</h3>
             <p>Only you control your passwords. We never store your master password or decrypt your data.</p>
         </div>
-
         <div class="feature-card">
             <h3>📱 Access Anywhere</h3>
             <p>Secure access from any device, anytime. Your vault is always with you, always encrypted.</p>
         </div>
-
         <div class="feature-card">
             <h3>⚡ Lightning Fast</h3>
-            <p>Instant search, retrieval, and password generation. Speed and security don't have to compromise.</p>
+            <p>Instant search, retrieval, and password generation. Speed and security, no compromise.</p>
         </div>
     </div>
 
-    <p style="margin-top: 50px; font-size: 18px; color: #b0b0b0;">Ready to take control of your digital security?</p>
+    <p style="margin-top: 50px; font-size: 18px; color: #b0b0b0;">
+        Ready to take control of your digital security?
+    </p>
 
     <div class="cta-buttons">
-        <button onclick="window.location.href='login.html'" style="background: linear-gradient(135deg, #00d4ff, #0099ff);">
+        <button onclick="window.location.href='login.html'"
+                style="background: linear-gradient(135deg, #00d4ff, #0099ff);">
             🚀 Login Now
         </button>
-        <button onclick="window.location.href='login.html'" class="secondary" style="background: rgba(100, 150, 200, 0.6); color: white;">
+        <!-- FIX: "Learn More" was also linking to login.html — now smooth-scrolls to features -->
+        <button onclick="document.getElementById('features').scrollIntoView({ behavior: 'smooth' })"
+                class="secondary">
             📚 Learn More
         </button>
     </div>
@@ -60,5 +61,13 @@
 </div>
 
 <script src="js/api.js"></script>
+<script>
+    // If already logged in, redirect directly to vault
+    document.addEventListener('DOMContentLoaded', function () {
+        if (api && api.isLoggedIn()) {
+            window.location.href = 'vault.html';
+        }
+    });
+</script>
 </body>
 </html>

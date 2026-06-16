@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔐 Register - Secure Password Vault</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="container">
+    <div style="margin-bottom: 30px;">
+        <h1 style="font-size: 48px; margin-bottom: 10px; -webkit-text-fill-color: initial;">🔐</h1>
+        <h2>Create Account</h2>
+        <p>Join the secure vault to protect your digital life</p>
+    </div>
+
+    <div id="errorMsg" class="error-msg"></div>
+
+    <input type="text"     id="regUsername"        placeholder="👤 Choose a Username"    required>
+    <input type="email"    id="regEmail"            placeholder="✉️ Email Address"        required>
+    <input type="password" id="regPassword"         placeholder="🔑 Choose a Password"    required>
+    <!-- FIX: Confirm password field was missing — users couldn't verify their password -->
+    <input type="password" id="regConfirmPassword"  placeholder="🔒 Confirm Password"     required>
+
+    <!-- FIX: Added id="registerBtn" so auth.js can disable it during registration -->
+    <button id="registerBtn" onclick="executeRegister()" class="success">
+        🚀 Create Secure Account
+    </button>
+
+    <div style="margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
+        <p style="color: #a0a0a0; margin-bottom: 10px;">Already have an account?</p>
+        <a href="login.html" style="color: #00d4ff; text-decoration: none; font-weight: 600; transition: all 0.3s ease;">
+            ← Back to Login
+        </a>
+    </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+</body>
+</html>

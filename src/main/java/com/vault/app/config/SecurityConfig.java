@@ -14,6 +14,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
+    private final RateLimitingFilter rateLimitingFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -25,14 +26,18 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/h2-console/**").permitAll()
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/", "/*.html", "/css/**", "/js/**").permitAll() // VIP pass for static files
-                        .anyRequest().authenticated() // The ONLY catch-all, securely at the very end!
+                        // 1. VIP LOCKDOWN: Only require tokens for these specific backend data routes
+                        .requestMatchers("/api/passwords/**").authenticated()
+                        .requestMatchers("/api/auth/me").authenticated()
+
+                        // 2. OPEN DOORS: Allow everything else (HTML, CSS, JS, Login, Register API) to pass freely
+                        .anyRequest().permitAll()
                 )
                 .headers(headers -> headers.frameOptions(frame -> frame.disable()))
-                // Put our JWT Filter in front of the standard Spring security gate
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
+                // Keep our shields in place
+                .addFilterBefore(rateLimitingFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(jwtFilter, RateLimitingFilter.class);
 
         return http.build();
     }
