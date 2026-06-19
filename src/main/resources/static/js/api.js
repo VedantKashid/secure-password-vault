@@ -4,7 +4,7 @@
 
 class PasswordVaultAPI {
     constructor() {
-        this.baseURL = 'http://localhost:8080/api';
+        this.baseURL = 'https://aegis-vault-mumx.onrender.com/api';
         this.token = localStorage.getItem('token');
     }
 
