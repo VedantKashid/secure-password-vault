@@ -1,0 +1,1 @@
+web: java -Xmx400m -jar target/*.jar
